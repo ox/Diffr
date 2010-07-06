@@ -1,0 +1,37 @@
+PaperCreate
+====================
+
+Paper crate is a versioned 
+file store service. It
+leverages many technologies
+like S3, Sinatra, Rack and 
+Diff::LCS amongst others.
+
+Usage:
+
+send a file:
+curl -F "file=@file.txt" papercrate.heroku.com
+
+this will automagically
+version the file if there
+are any changes.
+
+get a files' version:
+curl papercrate.heroku.com/what/version/file.txt
+
+send back as a json like:
+{"version":3}
+
+get latest version of a file:
+curl papercrate.heroku.com/clone/file.txt
+
+get certain version of file(wip):
+curl papercrate.heroku.com/get/v4/file.txt
+
+for these last two
+functions, you actually 
+get a json back like:
+{"name":"file.txt","version":"1","text":"some file3\n"}
+
+
+
