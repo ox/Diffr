@@ -1,6 +1,5 @@
 require 'json'
 require 'diff/lcs'
-require 'S3Setup'
 require 'aws/s3'
 
 AWS::S3::Base.establish_connection!(
