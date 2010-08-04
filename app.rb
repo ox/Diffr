@@ -32,15 +32,53 @@ get '/' do
   erb :index
 end
 
-post '/diff' do
-  output_text = ""
-  hd = HTMLDiff.new(output_text)
-  
-  left = params[:left].to_s
-  right = params[:right].to_s
-  output_text << "<div style='width:100%;'><pre>"
-  Diff::LCS.traverse_sequences(left, right, hd)
-  output_text << "</pre></div>"
-  return output_text
-end
 
+
+post '/diff' do
+  data_old = params[:left].to_s.split(/\n/).map! { |e| e.chomp }
+  data_new = params[:right].to_s.split(/\n/).map! { |e| e.chomp }
+  
+  diffs = Diff::LCS.diff(data_old, data_new)
+  diffs = nil if diffs.empty?
+  
+  return "No Difference" unless diffs
+   
+  oldhunk = hunk = nil
+  @format ||= :old
+  @lines  ||= 0
+  output = ""
+  file_length_difference = 0
+  
+  case @format
+  when :context
+    char_old = '*' * 3
+    char_new = '-' * 3
+  when :unified
+    char_old = '-' * 3
+    char_new = '+' * 3
+  end
+  
+  diffs.each do |piece|
+    begin
+      hunk = Diff::LCS::Hunk.new(data_old, data_new, piece, @lines,
+                                 file_length_difference)
+      file_length_difference = hunk.file_length_difference
+
+      next unless oldhunk
+
+      if (@lines > 0) and hunk.overlaps?(oldhunk)
+        hunk.unshift(oldhunk)
+      else
+        output << oldhunk.diff(@format) 
+      end
+    ensure
+      oldhunk = hunk
+      output << "<br/>"
+    end
+  end
+
+  output << oldhunk.diff(@format)
+  output << "<br/>"
+
+  return output.gsub(/"(.*?)<br\/>(.*?)"/, "\"&lt;br/&gt;\"").gsub(/"(.*?)<pre>(.*?)"/, "\"&lt;pre&gt;\"")
+end
