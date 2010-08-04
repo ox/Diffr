@@ -1,9 +1,8 @@
 require 'rubygems'
 require 'sinatra'
-require 'main'
+require 'app'
 
 set :run, false
-set :environment, :production
-set :authorization_realm, "PaperCrate"
+set :environment, :development
 
 run Sinatra::Application

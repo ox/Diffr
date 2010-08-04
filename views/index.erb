@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  	<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  	<title>Diffr</title>
+  	<link rel="stylesheet" href='reset.css' type='text/css' />
+	<link rel="stylesheet" href='style.css' type='text/css' />
+	<link rel="stylesheet" href='prettify.css' type='text/css' />
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js'></script>
+	<script type='text/javascript'>
+		$(document).ready(function() {
+			$('#submit_forms').click(function(event){
+				$.post('/diff', {left: $('#left').val(), right: $('#right').val() }, function(data){
+					$('#diff').html( data );
+				});
+			});
+		});
+	</script>
+	<script type="text/javascript">
+		var direction = -1;
+		var prog = null;
+		
+		var k = 0;
+		
+		function shift() {
+			if(k == 0 || k == 4) {
+				direction = direction * -1;
+			} 
+			k += direction;
+			prog.innerHTML = chars_bouncing[k];
+			setTimeout(shift, 100);
+		}
+
+		var chars_bouncing = ['&#xA708;','&#xA709;','&#xA70A;','&#xA70B;','&#xA70C;'];
+		var chars_d = ['D','&#xD0;','&#x010E;','&#x03B4;','&#x0414;'];
+		var chars_i = ['i', '&#xEC;','&#xEF;','&#x012D;'];
+		var chars_f1 = ['f','&#x0192;','&#x0191;','&#x13B0;'];
+		var chars_f2 = ['f','&#x0191;','&#x0192;','&#x01AD;','&#x13A8;'];
+		var chars_r = ['r','&#x0155;','&#x0157;','&#x0213;','&#x027C;'];
+
+		function swapLetters() {
+			document.getElementById('d').innerHTML = chars_d[Math.floor(Math.random() * chars_d.length)];
+			document.getElementById('i').innerHTML = chars_i[Math.floor(Math.random() * chars_i.length)];
+			document.getElementById('f1').innerHTML = chars_f1[Math.floor(Math.random() * chars_f1.length)];
+			document.getElementById('f2').innerHTML = chars_f2[Math.floor(Math.random() * chars_f2.length)];
+			document.getElementById('r').innerHTML = chars_r[Math.floor(Math.random() * chars_r.length)];
+			setTimeout(swapLetters, 5000);
+		}
+		
+		function init() {
+			prog = document.getElementById('progress');
+			shift();
+			swapLetters();
+		}
+		
+		window.onload = init;
+	</script>
+</head>
+
+<body>
+    <div id="wrapper">
+      <div id="header">
+	<div id="notice"><span></span><a href="#">X</a></div>
+        <!-- <img id="logo" src="/images/logo2.png" alt="Logo"/> -->
+        <a href="/"><h1 id="title"><span id='progress'></span><!-- &#xF83D; -->
+		<span id='d'></span>
+		<span id='i'></span>
+		<span id='f1'></span>
+		<span id='f2'></span>
+		<span id='r'></span>
+		</h1></a>
+      </div>
+      <div id="content">
+        <div id="webservices" class="frame">
+			<textarea id='left'></textarea>
+			<textarea id='right'></textarea>
+			<button id='submit_forms'>Diff</button> 
+		</div>
+
+		<div class="frame"><pre id="diff"></pre>
+		</div>
+      </div>
+      <div id="push"></div>
+    </div>
+    <div id="footer">
+    </div>
+  </body>
+</html>
