@@ -250,6 +250,14 @@ input {
 	height: 400px;
 }
 
+#submit_forms {
+	margin-top: 20px;
+	border: 1px solid #666;
+	background: #999;
+	font-size: 1.5em;
+	font-variant: small-caps;
+}
+
 .diff
 {
 border: 1px solid black;
